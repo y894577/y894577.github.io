@@ -164,7 +164,7 @@ h6 {
 a {
   text-decoration: none;
   outline-width: 0;
-  color: #258fb8;
+  color: #bb60d5;
   outline: none;
 }
 .alignleft {
@@ -279,6 +279,9 @@ a {
   #container #header .header-menu {
     line-height: 1.3;
     min-height: 3rem;
+  }
+  #container .header-author {
+    font-family: auto;
   }
   #container .header-author.fixed {
     position: fixed;
@@ -1366,10 +1369,10 @@ color
   font-size: 1rem;
 }
 .article-entry blockquote {
-  padding: 0.4em 20px;
-  margin: 0.5em auto;
-  border-left: 4px solid rgba(147,181,224,0.4);
-  background: rgba(255,255,255,0.4);
+  padding: 0.4em 15px;
+  margin: 0.5em 10px;
+  border-left: 4px solid rgba(129,99,189,0.3);
+  background: rgba(99,99,172,0.05);
   -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
   box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 }
@@ -1393,15 +1396,19 @@ color
 .article-entry p {
   margin: 0.85em auto;
   line-height: 1.7;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 .article-entry em {
   font-style: italic;
+  color: #4abdeb;
 }
 .article-entry video {
   max-width: 100%;
 }
 .article-entry strong {
-  font-weight: bold;
+  font-weight: 500;
+  color: #8163bd;
 }
 .article-entry li strong {
   color: #708090;
@@ -1426,7 +1433,7 @@ color
 .article-entry table {
   width: 100%;
   max-width: 65em;
-  border: 1px solid #dedede;
+  border: 1px solid #dfe2e5;
   margin: 15px auto;
   border-collapse: collapse;
   empty-cells: show;
@@ -1438,7 +1445,7 @@ color
 .article-entry table th {
   font-weight: bold;
   text-align: center;
-  background: rgba(158,188,226,0.2);
+  background: rgba(99,99,172,0.2);
   white-space: nowrap;
 }
 .article-entry table tbody tr:hover {
@@ -1450,7 +1457,7 @@ color
   padding: 0 10px;
 }
 .article-entry table tr:nth-child(2n) {
-  background: rgba(158,188,226,0.12);
+  background: rgba(99,99,172,0.05);
 }
 .article-entry table td:nth-child(1) {
   white-space: nowrap;
@@ -1461,7 +1468,7 @@ color
 }
 .article-entry ul,
 .article-entry ol {
-  margin: 10px 0;
+  margin: 10px 20px;
 }
 .article-entry ul li.task-list,
 .article-entry ol li.task-list {
@@ -1478,7 +1485,7 @@ color
 }
 .article-entry ul > li:before {
   content: "";
-  background: #dedede;
+  background: rgba(129,99,189,0.4);
 }
 .article-entry ul > li:before {
   display: inline-block;
@@ -1487,47 +1494,42 @@ color
   height: 0.4em;
   margin-right: 0.5em;
   margin-bottom: 0.11em;
-  border: 1px solid #d3d3d3;
+  border: 2px solid rgba(129,99,189,0.1);
   border-radius: 50%;
-  background: #d3d3d3;
+  background: rgba(129,99,189,0.2);
 }
 .article-entry h1 {
   margin-top: 30px;
 }
 .article-entry h2 {
-  margin: 0.5em auto;
-  color: #66be66;
-  padding-bottom: 5px;
+  margin: 0.5em 10px;
+  color: #6c549c;
+  padding-bottom: 15px;
   border-bottom: 1px solid #ddd;
-  text-align: center;
-  font-size: 1.5rem;
+  text-align: left;
+  font-size: 1.8rem;
 }
 .article-entry h2:hover {
-  color: #88acdb;
-}
-.article-entry h2::before,
-.article-entry h2::after {
-  content: " —— ";
-  font-family: Arial;
+  color: #8163bd;
 }
 .article-entry h3 {
-  margin: 0.5em auto;
-  color: #438aac;
-  background: rgba(243,248,253,0.6);
-  border: 1px solid #d2e8fa;
-  padding: 0.2em 0.6em;
+  margin: 20px 10px;
+  color: #6c549c;
+  background: rgba(99,99,172,0.05);
+  border: 1px solid rgba(99,99,172,0.1);
+  padding: 0.3em 0.6em;
   -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
   box-shadow: 1px 1px 1px rgba(0,0,0,0.15);
 }
 .article-entry h3:hover a {
   text-decoration: underline;
 }
-.article-entry h3::after {
-  content: " >";
+.article-entry h3::before {
+  content: " >  ";
 }
-.article-entry h4,
-.article-entry h5,
-.article-entry h6 {
+.article-entry margin-right 20px h4,
+.article-entry margin-right 20px h5,
+.article-entry margin-right 20px h6 {
   margin-top: 20px;
   color: #574c4c;
   padding-bottom: 5px;
@@ -1664,9 +1666,6 @@ color
 }
 li:hover {
   background: rgba(158,188,226,0.21);
-}
-.article-entry > ol:last-child > li:nth-child(2n) {
-  background: rgba(158,188,226,0.12);
 }
 .article-entry > ol:last-child li {
   word-break: break-all;
@@ -2218,7 +2217,7 @@ aside.comment-bar:active {
   text-decoration: underline;
 }
 .article-entry code {
-  color: #808080;
+  color: #bb60d5;
   background: rgba(248,237,223,0.5);
   padding: 0.05em 0.3em;
   border-radius: 3px;
