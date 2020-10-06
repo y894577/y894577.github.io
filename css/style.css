@@ -1676,7 +1676,7 @@ li:hover {
 #tocButton {
   position: fixed;
   left: 220px;
-  top: 385px;
+  top: 425px;
   font-size: 0.9em;
   font-weight: bold;
   font-family: inherit;
@@ -1693,7 +1693,7 @@ li:hover {
 .toc-article {
   position: fixed;
   width: 230px;
-  top: 378px;
+  top: 425px;
   bottom: 1em;
   left: 0;
   margin-left: 0;
