@@ -15,18 +15,18 @@
 
 
 
-<meta name="description" content="一个MySQL超时等待问题">
+<meta name="description" content="Spring 个人学习笔记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="关于MySQL行锁等待超时">
-<meta property="og:url" content="https://y894577.github.io/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:title" content="Spring Security的学习笔记">
+<meta property="og:url" content="https://y894577.github.io/2020/11/15/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="无心のBLOG">
-<meta property="og:description" content="一个MySQL超时等待问题">
+<meta property="og:description" content="Spring 个人学习笔记">
 <meta property="og:locale">
-<meta property="article:published_time" content="2020-09-29T14:44:06.000Z">
-<meta property="article:modified_time" content="2020-10-06T14:36:23.546Z">
+<meta property="article:published_time" content="2020-11-15T13:35:07.000Z">
+<meta property="article:modified_time" content="2020-11-12T13:35:38.615Z">
 <meta property="article:author" content="无心">
-<meta property="article:tag" content="MySQL">
-<meta property="article:tag" content="bug">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring">
 <meta name="twitter:card" content="summary">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
@@ -61,7 +61,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>关于MySQL行锁等待超时 | 无心のBLOG</title>
+<title>Spring Security的学习笔记 | 无心のBLOG</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -198,11 +198,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-关于mysql行锁超时问题" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-SpringSecurity的学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/" class="article-date">
-      <time datetime="2020-09-29T14:44:06.000Z" itemprop="datePublished">2020-09-29</time>
+      <a href="/2020/11/15/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+      <time datetime="2020-11-15T13:35:07.000Z" itemprop="datePublished">2020-11-15</time>
 </a>
 
 
@@ -217,7 +217,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      关于MySQL行锁等待超时
+      Spring Security的学习笔记
     </h1>
   
 
@@ -226,13 +226,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/BUG%E9%9B%86%E5%90%88/">BUG集合</a>
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bug/" rel="tag">bug</a></li></ul>
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -242,10 +242,24 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h3 id="【什么是锁】"><a href="#【什么是锁】" class="headerlink" title="【什么是锁】"></a>【什么是锁】</h3><blockquote>
-<p>在介绍如何解决行锁等待问题前，先简单介绍下这类问题产生的原因。产生原因简述：当多个事务同时去操作(增删改)某一行数据的时候，MySQL 为了维护 ACID 特性，就会用锁的形式来防止多个事务同时操作某一行数据，避免数据不一致。只有分配到行锁的事务才有权力操作该数据行，直到该事务结束，才释放行锁，而其他没有分配到行锁的事务就会产生行锁等待。如果等待时间超过了配置值(也就是 innodb_lock_wait_timeout 参数的值，个人习惯配置成 5s，MySQL 官方默认为 50s)，则会抛出行锁等待超时错误。</p>
+        <h2 id="CSRF问题"><a href="#CSRF问题" class="headerlink" title="CSRF问题"></a>CSRF问题</h2><h3 id="什么是CSRF"><a href="#什么是CSRF" class="headerlink" title="什么是CSRF"></a>什么是CSRF</h3><blockquote>
+<p>跨站请求攻击，简单地说，是攻击者通过一些技术手段欺骗用户的浏览器去访问一个自己曾经认证过的网站并运行一些操作（如发邮件，发消息，甚至财产操作如转账和购买商品）。由于浏览器曾经认证过，所以被访问的网站会认为是真正的用户操作而去运行。这利用了web中用户身份验证的一个漏洞：<strong>简单的身份验证只能保证请求发自某个用户的浏览器，却不能保证请求本身是用户自愿发出的</strong>。</p>
 </blockquote>
-<p><strong>提交translation之后如果没有设置自动提交事务一定一定要commit！！！以及及时close！！！</strong><br>在测试的时候请求被拦截，还以为是响应头文件有问题，但是又看不出哪里有问题，最后用junit单元测试之后还是如此，一直显示mysql的提交超时，事务回滚。最后怒关服务器居然好了，最后发现是服务器一直霸占着SqlSession，没有close，导致事件在队列中等待最后超时。。。。等重构到spring AOP的时候记得加个@After注解</p>
+<h3 id="如何防范CSRF攻击"><a href="#如何防范CSRF攻击" class="headerlink" title="如何防范CSRF攻击"></a>如何防范CSRF攻击</h3><p>为系统中的每一个连接请求加上一个token，这个token是服务器随机生成的，我们每次访问一个页面，页面会传回一个服务端生成的token。对于这个页面的请求，我们的服务端会对token进行验证。</p>
+<h3 id="Spring-Security中的防范措施"><a href="#Spring-Security中的防范措施" class="headerlink" title="Spring Security中的防范措施"></a>Spring Security中的防范措施</h3><p>在Spring Security中默认开启CSRF防御。但是我们需要手动配置将token存放在cookie中，并且关闭HttpOnly，允许js读取该cookie。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebSecurityConfig</span> <span class="keyword">extends</span> <span class="title">WebSecurityConfigurerAdapter</span> </span>&#123;</span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">  http.csrf()</span><br><span class="line">   .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="情况1：前后端不分离"><a href="#情况1：前后端不分离" class="headerlink" title="情况1：前后端不分离"></a>情况1：前后端不分离</h4><p>前后端不分离即使用jsp或者thymeleaf模板</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$.ajax(&#123; </span><br><span class="line"> data: &#123;  </span><br><span class="line">  <span class="string">&quot;_csrf&quot;</span>: <span class="string">&quot;$&#123;_csrf.token&#125;&quot;</span>  </span><br><span class="line"> &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">action</span>=<span class="string">&quot;/profile&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;$&#123;_csrf.parameterName&#125;&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;_csrf.token&#125;&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="情况2：前后端分离"><a href="#情况2：前后端分离" class="headerlink" title="情况2：前后端分离"></a>情况2：前后端分离</h4><p>在vue中，我们首先获取cookie并截取相应的字段</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">getCookie(name) &#123;</span><br><span class="line">    <span class="keyword">var</span> value = <span class="string">&#x27;; &#x27;</span> + <span class="built_in">document</span>.cookie;</span><br><span class="line">    <span class="keyword">var</span> parts = value.split(<span class="string">&#x27;; &#x27;</span> + name + <span class="string">&#x27;=&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> (parts.length === <span class="number">2</span>) <span class="keyword">return</span> parts.pop().split(<span class="string">&#x27;;&#x27;</span>).shift()</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p>然后在post表单中新增请求头</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">axios(&#123;</span><br><span class="line">    headers: &#123;</span><br><span class="line">        <span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/x-www-form-urlencoded&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;X-CSRFToken&#x27;</span>: that.getCookie(<span class="string">&#x27;XSRF-TOKEN&#x27;</span>)</span><br><span class="line">    &#125;,</span><br><span class="line">   ······</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -254,13 +268,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/">关于MySQL行锁等待超时</a></p>
+        <p><span>本文标题:</span><a href="/2020/11/15/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring Security的学习笔记</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">无心</a></p>
-        <p><span>发布时间:</span>2020-09-29, 22:44:06</p>
-        <p><span>最后更新:</span>2020-10-06, 22:36:23</p>
+        <p><span>发布时间:</span>2020-11-15, 21:35:07</p>
+        <p><span>最后更新:</span>2020-11-12, 21:35:38</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/" title="关于MySQL行锁等待超时">https://y894577.github.io/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://y894577.github.io/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/　　作者: 无心" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2020/11/15/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="Spring Security的学习笔记">https://y894577.github.io/2020/11/15/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://y894577.github.io/2020/11/15/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/　　作者: 无心" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -272,16 +286,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2020/10/05/Spring%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BAOP/">
-                    Spring学习笔记之AOP
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2020/09/29/ProxyPattern/">
-                    设计模式之代理模式
+                <a href="/2020/10/27/SoftwareDesignerExam/">
+                    软考知识点汇总
                 </a>
             </div>
         
@@ -293,7 +301,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%80%90%E4%BB%80%E4%B9%88%E6%98%AF%E9%94%81%E3%80%91"><span class="toc-number">1.</span> <span class="toc-text">【什么是锁】</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CSRF%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">CSRF问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCSRF"><span class="toc-number">1.1.</span> <span class="toc-text">什么是CSRF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%98%B2%E8%8C%83CSRF%E6%94%BB%E5%87%BB"><span class="toc-number">1.2.</span> <span class="toc-text">如何防范CSRF攻击</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Security%E4%B8%AD%E7%9A%84%E9%98%B2%E8%8C%83%E6%8E%AA%E6%96%BD"><span class="toc-number">1.3.</span> <span class="toc-text">Spring Security中的防范措施</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%83%85%E5%86%B51%EF%BC%9A%E5%89%8D%E5%90%8E%E7%AB%AF%E4%B8%8D%E5%88%86%E7%A6%BB"><span class="toc-number">1.3.1.</span> <span class="toc-text">情况1：前后端不分离</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%83%85%E5%86%B52%EF%BC%9A%E5%89%8D%E5%90%8E%E7%AB%AF%E5%88%86%E7%A6%BB"><span class="toc-number">1.3.2.</span> <span class="toc-text">情况2：前后端分离</span></a></li></ol></li></ol></li></ol>
         
     </div>
     <style>
@@ -329,7 +337,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"关于MySQL行锁等待超时　| 无心のBLOG　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"Spring Security的学习笔记　| 无心のBLOG　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -349,15 +357,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2020/10/05/Spring%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BAOP/" title="上一篇: Spring学习笔记之AOP">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2020/09/29/ProxyPattern/" title="下一篇: 设计模式之代理模式">
+            <a href="/2020/10/27/SoftwareDesignerExam/" title="下一篇: 软考知识点汇总">
                 <i class="fa fa-angle-right"></i>
             </a>
         
