@@ -14,17 +14,21 @@
 <meta name="author" content="无心" />
 
 
-    
-    
 
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="无心のBLOG">
-<meta property="og:url" content="https://y894577.github.io/index.html">
+<meta name="description" content="前言 在学单例模式的时候，有一种懒汉式的方法可以保证线程同步问题，就是Double Check双重检查锁： 123456789101112131415public class Singleton &amp;#123;        private volatile static Singleton singleton;        private Singleton() &amp;#123;&amp;#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="volatile与内存重排">
+<meta property="og:url" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/index.html">
 <meta property="og:site_name" content="无心のBLOG">
+<meta property="og:description" content="前言 在学单例模式的时候，有一种懒汉式的方法可以保证线程同步问题，就是Double Check双重检查锁： 123456789101112131415public class Singleton &amp;#123;        private volatile static Singleton singleton;        private Singleton() &amp;#123;&amp;#125;">
 <meta property="og:locale">
+<meta property="og:image" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/p1.png">
+<meta property="og:image" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/blog/source/_posts/volatile与内存重排/p2.jpg">
+<meta property="article:published_time" content="2020-11-16T08:00:56.000Z">
+<meta property="article:modified_time" content="2020-11-16T10:59:55.492Z">
 <meta property="article:author" content="无心">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/p1.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -54,13 +58,11 @@
 
 
 
-    <style> .article { opacity: 0;} </style>
-
 
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>无心のBLOG</title>
+<title>volatile与内存重排 | 无心のBLOG</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -69,8 +71,8 @@
     var yiliaConfig = {
         fancybox: true,
         animate: true,
-        isHome: true,
-        isPost: false,
+        isHome: false,
+        isPost: true,
         isArchive: false,
         isTag: false,
         isCategory: false,
@@ -197,81 +199,7 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap">
-  
-    <article id="post-TODOLIST" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/09/27/TODOLIST/" class="article-date">
-      <time datetime="2020-09-27T15:23:04.428Z" itemprop="datePublished">2020-09-27</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/27/TODOLIST/">TO DO LIST</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              未来的学习路线
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-        <div class="article-pop-out tagcloud">
-          <a class="">置顶</a>
-        </div>
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E5%85%B6%E4%BB%96/">其他</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9D%82%E8%B0%88/" rel="tag">杂谈</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/09/27/TODOLIST/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-volatile与内存重排" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-volatile与内存重排" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
       <a href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/" class="article-date">
@@ -289,12 +217,19 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/">volatile与内存重排</a>
+    <h1 class="article-title" itemprop="name">
+      volatile与内存重排
     </h1>
   
 
       </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
       
     
     <div class="article-entry" itemprop="articleBody">
@@ -348,571 +283,120 @@
       
     </div>
     
-    <div class="article-info article-info-index">
-      
-      
-
-      
-      
-      <div class="clearfix"></div>
-    </div>
-    
   </div>
   
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-SpringSecurity的学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/11/12/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
-      <time datetime="2020-11-12T13:35:07.000Z" itemprop="datePublished">2020-11-12</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/11/12/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring Security的学习笔记</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              Spring 个人学习笔记
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/11/12/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more">阅读全文 >></a>
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/">volatile与内存重排</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">无心</a></p>
+        <p><span>发布时间:</span>2020-11-16, 16:00:56</p>
+        <p><span>最后更新:</span>2020-11-16, 18:59:55</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/" title="volatile与内存重排">https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/　　作者: 无心" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-SoftwareDesignerExam" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/10/27/SoftwareDesignerExam/" class="article-date">
-      <time datetime="2020-10-27T01:07:52.000Z" itemprop="datePublished">2020-10-27</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/10/27/SoftwareDesignerExam/">软考知识点汇总</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              软考知识点总结
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
-    </div>
-
-
-      
-      
-        <p class="article-more-link">
-          <a href="/2020/10/27/SoftwareDesignerExam/#more">阅读全文 >></a>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
         </p>
-      
-      <div class="clearfix"></div>
     </div>
-    
-  </div>
-  
-</article>
 
 
 
-
-
-
-
-
-
-  
-    <article id="post-二分查找" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/10/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" class="article-date">
-      <time datetime="2020-10-12T03:20:06.000Z" itemprop="datePublished">2020-10-12</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+    <nav id="article-nav">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/10/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">学习笔记之二分查找</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              二分查找的细节实现
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" rel="tag">二分查找</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/10/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-SSM整合踩坑日记" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/10/06/SSM%E6%95%B4%E5%90%88%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0/" class="article-date">
-      <time datetime="2020-10-06T14:11:25.000Z" itemprop="datePublished">2020-10-06</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/10/06/SSM%E6%95%B4%E5%90%88%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0/">SSM整合踩坑日记</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              SSM整合过程中的一系列报错解决(╯‵□′)╯︵┻━┻
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0/">踩坑日记</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/10/06/SSM%E6%95%B4%E5%90%88%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-Spring学习笔记之AOP" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/10/05/Spring%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BAOP/" class="article-date">
-      <time datetime="2020-10-05T15:16:07.000Z" itemprop="datePublished">2020-10-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2020/11/12/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+                    Spring Security的学习笔记
+                </a>
+            </div>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/10/05/Spring%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BAOP/">Spring学习笔记之AOP</a>
-    </h1>
-  
+    </nav>
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              Spring AOP 个人学习笔记
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AOP/" rel="tag">AOP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/10/05/Spring%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BAOP/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
   
 </article>
 
-
-
-
-
-
-
-
-
-  
-    <article id="post-关于mysql行锁超时问题" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/" class="article-date">
-      <time datetime="2020-09-29T14:44:06.000Z" itemprop="datePublished">2020-09-29</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/">关于MySQL行锁等待超时</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              一个MySQL超时等待问题
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/BUG%E9%9B%86%E5%90%88/">BUG集合</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bug/" rel="tag">bug</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-ProxyPattern" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/09/29/ProxyPattern/" class="article-date">
-      <time datetime="2020-09-29T00:42:06.000Z" itemprop="datePublished">2020-09-29</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92"><span class="toc-number">2.</span> <span class="toc-text">什么是指令重排</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#new%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">new一个对象的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">volatile是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%8C%E9%87%8D%E6%A3%80%E6%B5%8B"><span class="toc-number">5.</span> <span class="toc-text">双重检测</span></a></li></ol>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/29/ProxyPattern/">设计模式之代理模式</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              自己对于代理模式的一点理解
-          
-      
     </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/09/29/ProxyPattern/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
+<div class="share">
     
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="page-SingletonPattern" class="article article-type-page" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2020/09/28/SingletonPattern/" class="article-date">
-      <time datetime="2020-09-28T11:10:46.000Z" itemprop="datePublished">2020-09-28</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"volatile与内存重排　| 无心のBLOG　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
     
-      <input type="hidden" class="isFancy" />
+
     
+</div>
+
+
+
+
+
+
+
     
-      <header class="article-header">
+
+
+
+
+    <div class="scroll" id="post-nav-button">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/09/28/SingletonPattern/">设计模式之单例模式</a>
-    </h1>
-  
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              对Spring部分源码的分析
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2020/11/12/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="下一篇: Spring Security的学习笔记">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
     </div>
 
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring/" rel="tag">Spring</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2020/09/28/SingletonPattern/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/">volatile与内存重排</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/11/12/SpringSecurity%E7%9A%84%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Spring Security的学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/27/SoftwareDesignerExam/">软考知识点汇总</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/12/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">学习笔记之二分查找</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/06/SSM%E6%95%B4%E5%90%88%E8%B8%A9%E5%9D%91%E6%97%A5%E8%AE%B0/">SSM整合踩坑日记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/10/05/Spring%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B9%8BAOP/">Spring学习笔记之AOP</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/09/29/%E5%85%B3%E4%BA%8Emysql%E8%A1%8C%E9%94%81%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98/">关于MySQL行锁等待超时</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/09/29/ProxyPattern/">设计模式之代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/09/28/SingletonPattern/">设计模式之单例模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/09/27/TODOLIST/">TO DO LIST</a></li></ul>
 
 
 
 
-
-
-
-
-
-  
-  
-
-<script src="https://cdn.jsdelivr.net/gh/yremp/yremp-js@1.5/sakura.js"></script></div>
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">
