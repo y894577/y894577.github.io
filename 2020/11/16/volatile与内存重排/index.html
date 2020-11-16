@@ -15,18 +15,20 @@
 
 
 
-<meta name="description" content="前言 在学单例模式的时候，有一种懒汉式的方法可以保证线程同步问题，就是Double Check双重检查锁： 123456789101112131415public class Singleton &amp;#123;        private volatile static Singleton singleton;        private Singleton() &amp;#123;&amp;#125;">
+<meta name="description" content="探究双重检查机制">
 <meta property="og:type" content="article">
 <meta property="og:title" content="volatile与内存重排">
 <meta property="og:url" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/index.html">
 <meta property="og:site_name" content="无心のBLOG">
-<meta property="og:description" content="前言 在学单例模式的时候，有一种懒汉式的方法可以保证线程同步问题，就是Double Check双重检查锁： 123456789101112131415public class Singleton &amp;#123;        private volatile static Singleton singleton;        private Singleton() &amp;#123;&amp;#125;">
+<meta property="og:description" content="探究双重检查机制">
 <meta property="og:locale">
 <meta property="og:image" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/p1.png">
-<meta property="og:image" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/blog/source/_posts/volatile与内存重排/p2.jpg">
+<meta property="og:image" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/p2.jpg">
 <meta property="article:published_time" content="2020-11-16T08:00:56.000Z">
-<meta property="article:modified_time" content="2020-11-16T10:59:55.492Z">
+<meta property="article:modified_time" content="2020-11-16T11:03:06.975Z">
 <meta property="article:author" content="无心">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="设计模式">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/p1.png">
 
@@ -226,8 +228,16 @@
       
       <div class="article-info article-info-post">
         
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+    </div>
+
 
         
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+    </div>
+
         <div class="clearfix"></div>
       </div>
       
@@ -277,7 +287,7 @@
 <h2 id="volatile是什么"><a href="#volatile是什么" class="headerlink" title="volatile是什么"></a>volatile是什么</h2><p>volatile是一个轻量级的线程同步机制。它的特性之一，是保证了变量在线程之间的<strong>可见性</strong>。</p>
 <p>可见性是指，当一个线程修改了某个变量的值，其他变量总能知道这个变量已经变化了。由于JMM的共享内存机制（每个线程维护自己的本地内存，里面存放着主内存的副本），如果一个线程修改了变量，其他线程的本地内存的副本不一定会进行及时更新，因此就造成了数据脏读。</p>
 <p>对于这个问题，volatile保证了内存的可见性。当一个线程进入了volatile代码块后，线程会获取锁，然后清空所有本地缓存，然后从主内存中拷贝最新的副本到本地内存，执行代码后将副本覆盖到主内存中，然后释放锁，同时通知其他线程原有的副本变量已经改变，需要重新从主内存中拷贝。</p>
-<p>同时，volatile禁止了指令重排序，使用了<strong>内存屏蔽指令</strong>。在每个 volatile 读操作的后面插入 LoadLoad 屏障和 LoadStore 屏障。在每个 volatile 写操作的前后分别插入一个 StoreStore 屏障和一个 StoreLoad 屏障。<img src="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/blog\source\_posts\volatile与内存重排\p2.jpg" alt="p2" style="zoom:67%;"></p>
+<p>同时，volatile禁止了指令重排序，使用了<strong>内存屏蔽指令</strong>。在每个 volatile 读操作的后面插入 LoadLoad 屏障和 LoadStore 屏障。在每个 volatile 写操作的前后分别插入一个 StoreStore 屏障和一个 StoreLoad 屏障。<img src="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/p2.jpg" alt="p2" style="zoom:67%;"></p>
 <h2 id="双重检测"><a href="#双重检测" class="headerlink" title="双重检测"></a>双重检测</h2><p>返回之前的问题，在单例模式中，new一个instance的操作是非原子性的，即我们如果不在代码块中加上volatile，那么new一个对象的操作2和操作3会因为指令重排导致执行顺序发生改变。那么就会造成instance对象还没有初始实例化，就已经指向了内存空间，获取整个对象的时候返回的就是一段空的内存，会造成程序错误。因此在多线程操作中，我们必须加上volatile保证这个对象已经初始化，之后再将对象指向分配好的内存空间，保证返回的单例是已经被创建好的。</p>
 
       
@@ -290,7 +300,7 @@
         <p><span>本文标题:</span><a href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/">volatile与内存重排</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">无心</a></p>
         <p><span>发布时间:</span>2020-11-16, 16:00:56</p>
-        <p><span>最后更新:</span>2020-11-16, 18:59:55</p>
+        <p><span>最后更新:</span>2020-11-16, 19:03:06</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/" title="volatile与内存重排">https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/</a>
             <span class="copy-path" data-clipboard-text="原文: https://y894577.github.io/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/　　作者: 无心" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

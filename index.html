@@ -300,59 +300,28 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
-<p>在学单例模式的时候，有一种懒汉式的方法可以保证线程同步问题，就是Double Check双重检查锁：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton singleton;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> == singleton) &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (Singleton.class) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (<span class="keyword">null</span> == singleton)</span><br><span class="line">                        singleton = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> singleton;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>这种机制保证了懒汉式创建单例的时候可以线程同步，但是看到代码的时候不能理解为什么需要加上volatile，查阅了一波资料，于是有了这篇笔记（。</p>
-</blockquote>
-<h2 id="什么是指令重排"><a href="#什么是指令重排" class="headerlink" title="什么是指令重排"></a>什么是指令重排</h2><p>在jvm中，有一种提升性能的方法叫做指令重排。比如在如下代码中</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = b + c;</span><br><span class="line">z = x + y;</span><br></pre></td></tr></table></figure>
-
-<p>这两段代码如果按照顺序执行，那么需要如下步骤：（自行补操作系统知识）</p>
-<ol>
-<li>IF 取指令</li>
-<li>ID 指令译码</li>
-<li>EX 执行指令</li>
-<li>MEM 访存取数</li>
-<li>WB 结果写回</li>
-</ol>
-<p>在现在的机器中，CPU指令的执行都是按照流水线方式执行的，大致流程如下图：</p>
-<img src="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/p1.png" alt="p1" style="zoom:67%;">
-
-
-
-<p>那么如果不进行指令重排，我们执行指令的时候，顺序如下</p>
-<blockquote>
-<p><strong>b加载到寄存器–&gt;c加载到寄存器–&gt;a将b和c相加放到寄存器–&gt;将寄存器的值保存到a–&gt;x加载到寄存器–&gt;y加载到寄存器–&gt;z将x和y相加放到寄存器–&gt;将寄存器的值保存到z</strong></p>
-</blockquote>
-<p>在执行bc相加的时候，会需要等待b和c加载到寄存器中才能执行相加指令，那么就需要等待，这样这段空闲等待时间就没有办法利用起来，于是我们调整顺序：</p>
-<blockquote>
-<p><strong>b加载到寄存器–&gt;c加载到寄存器–&gt;x加载到寄存器–&gt;a将b和c相加放到寄存器–&gt;y加载到寄存器–&gt;将寄存器的值保存到a–&gt;z将x和y相加放到寄存器–&gt;将寄存器的值保存到z</strong></p>
-</blockquote>
-<p>在bc相加的空闲时间，我们将x加载到寄存器的指令提前，在停顿加载的时候去处理别的数据，有效的利用资源，这就是指令重排。</p>
-<p>指令重排只发生在两个不相关的语句之间，在<strong>单线程</strong>环境下，指令重排并不会影响代码最终的执行结果。但是在多线程中，这种机制就会影响到最终的执行结果了。</p>
-<p>as-if-serial语义：不管怎么重排序，单线程下程序的执行结果不能被改变。</p>
-<h2 id="new一个对象的过程"><a href="#new一个对象的过程" class="headerlink" title="new一个对象的过程"></a>new一个对象的过程</h2><p>在执行<code>singleton = new Singleton();</code>这行代码的时候，需要执行三个步骤：</p>
-<p><strong>1、在堆区分配对象需要的内存</strong></p>
-<p>　　分配的内存包括本类和父类的所有实例变量，但不包括任何静态变量</p>
-<p><strong>2、执行实例初始化代码</strong></p>
-<p>　　初始化顺序是先初始化父类再初始化子类（双亲委派机制），初始化时先执行实例代码块然后是构造方法</p>
-<p><strong>3、将对象指向分配好的内存空间</strong></p>
-<h2 id="volatile是什么"><a href="#volatile是什么" class="headerlink" title="volatile是什么"></a>volatile是什么</h2><p>volatile是一个轻量级的线程同步机制。它的特性之一，是保证了变量在线程之间的<strong>可见性</strong>。</p>
-<p>可见性是指，当一个线程修改了某个变量的值，其他变量总能知道这个变量已经变化了。由于JMM的共享内存机制（每个线程维护自己的本地内存，里面存放着主内存的副本），如果一个线程修改了变量，其他线程的本地内存的副本不一定会进行及时更新，因此就造成了数据脏读。</p>
-<p>对于这个问题，volatile保证了内存的可见性。当一个线程进入了volatile代码块后，线程会获取锁，然后清空所有本地缓存，然后从主内存中拷贝最新的副本到本地内存，执行代码后将副本覆盖到主内存中，然后释放锁，同时通知其他线程原有的副本变量已经改变，需要重新从主内存中拷贝。</p>
-<p>同时，volatile禁止了指令重排序，使用了<strong>内存屏蔽指令</strong>。在每个 volatile 读操作的后面插入 LoadLoad 屏障和 LoadStore 屏障。在每个 volatile 写操作的前后分别插入一个 StoreStore 屏障和一个 StoreLoad 屏障。<img src="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/blog\source\_posts\volatile与内存重排\p2.jpg" alt="p2" style="zoom:67%;"></p>
-<h2 id="双重检测"><a href="#双重检测" class="headerlink" title="双重检测"></a>双重检测</h2><p>返回之前的问题，在单例模式中，new一个instance的操作是非原子性的，即我们如果不在代码块中加上volatile，那么new一个对象的操作2和操作3会因为指令重排导致执行顺序发生改变。那么就会造成instance对象还没有初始实例化，就已经指向了内存空间，获取整个对象的时候返回的就是一段空的内存，会造成程序错误。因此在多线程操作中，我们必须加上volatile保证这个对象已经初始化，之后再将对象指向分配好的内存空间，保证返回的单例是已经被创建好的。</p>
-
+              探究双重检查机制
+          
       
     </div>
     
     <div class="article-info article-info-index">
       
       
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+    </div>
+
 
       
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2020/11/16/volatile%E4%B8%8E%E5%86%85%E5%AD%98%E9%87%8D%E6%8E%92/#more">阅读全文 >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
