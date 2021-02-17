@@ -304,6 +304,8 @@
 <p>前提背景：</p>
 <p>由于Windows的环境乱七八糟的，而且C盘爆了，于是乎把C盘格了重装了Windows。但是Windows做开发其实各种环境安装配置有点混乱不太舒服（早年小白各种环境乱配），由于呼吸到了MacOS自由甜美的空气，unix实在是太香了，但是4g做开发实在是太顶了，于是干脆整上Linux做开发，Windows专心拿来给我打游戏（划掉</p>
 </blockquote>
+<h2 id="包管理"><a href="#包管理" class="headerlink" title="包管理"></a>包管理</h2><h3 id="yum"><a href="#yum" class="headerlink" title="yum"></a>yum</h3><h3 id="snap"><a href="#snap" class="headerlink" title="snap"></a>snap</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> sudo apt install snapd</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> sudo snap install core</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="Git配置"><a href="#Git配置" class="headerlink" title="Git配置"></a>Git配置</h2><h3 id="安装git"><a href="#安装git" class="headerlink" title="安装git"></a>安装git</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ su root</span><br><span class="line">$ apt-get install git</span><br></pre></td></tr></table></figure>
 
 <h3 id="配置用户名和邮箱"><a href="#配置用户名和邮箱" class="headerlink" title="配置用户名和邮箱"></a>配置用户名和邮箱</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git config --global user.name <span class="string">&quot;用户名&quot;</span></span><br><span class="line">$ git config --global user.email <span class="string">&quot;邮箱&quot;</span></span><br></pre></td></tr></table></figure>
@@ -344,9 +346,14 @@
 <p>启动mysql服务，测试</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ../support-files/mysql.server start</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mysql -u root -p</span></span><br></pre></td></tr></table></figure>
 
+<h3 id="PostgreSQL"><a href="#PostgreSQL" class="headerlink" title="PostgreSQL"></a>PostgreSQL</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> apt-get install postgresql postgresql-contrib</span></span><br></pre></td></tr></table></figure>
+
+<p>默认会创建一个postgres账号，需要使用createuser创建一个新账号</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> su postgres</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> createuser -interactive</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> createdb &lt;YOUR ACCOUNT NAME&gt;</span></span><br></pre></td></tr></table></figure>
 
 
-<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><h2 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h2><h3 id="tomcat"><a href="#tomcat" class="headerlink" title="tomcat"></a>tomcat</h3><h2 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h2><h3 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h3><p>gcc和g++默认在linux系统中，可以直接查看</p>
+
+<h2 id="服务器配置"><a href="#服务器配置" class="headerlink" title="服务器配置"></a>服务器配置</h2><h3 id="tomcat"><a href="#tomcat" class="headerlink" title="tomcat"></a>tomcat</h3><h2 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h2><h3 id="C"><a href="#C" class="headerlink" title="C++"></a>C++</h3><p>gcc和g++默认在linux系统中，可以直接查看</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gcc -v</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> g++ -v</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="JAVA"><a href="#JAVA" class="headerlink" title="JAVA"></a>JAVA</h3><p>先去 <a target="_blank" rel="noopener" href="https://www.oracle.com/cn/java/technologies/javase/javase-jdk8-downloads.html">官网</a> 下载JDK8，解压到/usr/local目录下</p>
